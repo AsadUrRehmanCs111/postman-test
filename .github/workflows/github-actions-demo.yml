@@ -1,0 +1,27 @@
+name: CI Pipeline
+
+# Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Jobs to run
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Run tests
+      - name: Run tests
+        run: npm test
+        
+      - name: Run API TESTS
+        run: newman run "Restful Booker BVT.postman_collection.json" -e Production.postman_environment.json 
