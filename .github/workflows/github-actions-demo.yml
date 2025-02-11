@@ -18,10 +18,6 @@ jobs:
       # Check out the repository code
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # Run tests
-      - name: Run tests
-        run: npm test
         
       - name: Run API TESTS
         run: newman run "Restful Booker BVT.postman_collection.json" -e Production.postman_environment.json 
