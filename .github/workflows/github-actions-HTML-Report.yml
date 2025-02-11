@@ -1,0 +1,47 @@
+# This is an intermediate workflow to help you produce a HTML extra test results report
+name: CI Pipeline
+
+# Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Jobs to run
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js (example for a Node.js project)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16  # Specify the Node.js version
+
+    # Install the newman command line utility and also install the html extra reporter
+      - name: Install newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+          
+    # Make directory to upload the test results
+      - name: Make Directory for results
+        run: mkdir -p testResults
+      
+      - name: Run API Tests
+        run: newman run "tau/Lesson4/RestfulBookerBVT.postman_collection.json" -e "tau/Lesson4/Production.postman_environment.json" -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html
+
+    # Upload the contents of Test Results directory to workspace
+      - name: Output the run Details
+        uses: actions/upload-artifact@v2
+        with: 
+          name: RunReports
+          path: testResults
